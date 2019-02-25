@@ -1,0 +1,7 @@
+---
+- hosts: all
+  become: yes
+  tasks: 
+   - command: docker run -d -P nareshmnvs/addressbook:v2 
+     register: out
+   - debug: var=out

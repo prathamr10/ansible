@@ -1,0 +1,30 @@
+- name: Create EC2 Instance
+  hosts: localhost
+  tasks:
+    - ec2:
+        key_name: test
+        instance_type: t2.micro
+        image: ami-0f65671a86f061fcd
+        wait: yes
+        group: mysecgroup 
+        count: 1
+        vpc_subnet_id: subnet-c33c268e
+        assign_public_ip: yes
+        region: us-east-2
+      register: out
+   
+    - debug:
+        msg: "{{out}}"
+
+    - add_host:
+        hostname: "{{item.public_ip}}"
+        groupname: myserver
+      with_items: "{{out.instances}}"
+
+    - wait_for:
+        host: "{{ item.public_ip }}"
+        port: 22
+        delay: 60
+        timeout: 320
+        state: started
+      with_items: "{{ out.instances }}"

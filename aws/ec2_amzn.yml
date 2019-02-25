@@ -1,0 +1,55 @@
+- name: Create EC2 Instance
+  hosts: localhost
+  tasks:
+    - ec2:
+        key_name: test
+        instance_type: t2.micro
+        image: ami-04328208f4f0cf1fe 
+        wait: yes
+        group: mysecgroup 
+        count: 1
+        vpc_subnet_id: subnet-c33c268e
+        assign_public_ip: yes
+        region: us-east-2
+      register: out
+   
+    - debug:
+        msg: "{{out}}"
+
+    - add_host:
+        hostname: "{{item.public_ip}}"
+        groupname: myservers
+        ansible_user: ec2-user 
+        ansible_ssh_private_key_file: /home/aws/ueokey.pem 
+      with_items: "{{out.instances}}"
+
+    - wait_for:
+        host: "{{ item.public_ip }}"
+        port: 22
+        delay: 60
+        timeout: 320
+        state: started
+      with_items: "{{ out.instances }}"
+
+    - copy:
+        content: "{% for host in groups.myservers %}{{ hostvars[host].inventory_hostname }}\n{% endfor %}"
+        dest: /tmp/amzninv
+      delegate_to: localhost
+
+- name: setup user
+  hosts: myservers
+  become: yes
+  tasks:
+    - name: install git
+      package: 
+        name: git
+        state: present
+    - name: clone git repo
+      shell: git clone https://github.com/lerndevops/scritps.git
+      args:
+        chdir: /tmp
+    - name: create user
+      shell: /tmp/scritps/setup-aws-user.sh
+      register: outt
+    - debug: 
+        var: outt
