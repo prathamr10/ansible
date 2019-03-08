@@ -4,7 +4,7 @@
     - ec2:
         key_name: test
         instance_type: t2.micro
-        image: ami-0f65671a86f061fcd
+        image: ami-0653e888ec96eab9b
         wait: yes
         group: mysecgroup 
         count: 1
@@ -31,14 +31,22 @@
         state: started
       with_items: "{{ out.instances }}"
 
+    - copy:
+        content: "{% for host in groups.myservers %}{{ hostvars[host].inventory_hostname }}\n{% endfor %}"
+        dest: /home/aws/uinventory
+      delegate_to: localhost
+
 - name: setup user
   hosts: myservers
   become: yes
   tasks:
-    - name: install git
+    - name: install git & python
       package:
-        name: git
-        state: installed
+        name: "{{ item }}"
+        state: present
+      with_items:
+          - git
+          - python
     - name: clone git repo
       shell: git clone https://github.com/lerndevops/scritps.git
       args:
