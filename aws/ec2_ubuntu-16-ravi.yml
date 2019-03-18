@@ -2,15 +2,15 @@
   hosts: localhost
   tasks:
     - ec2:
-        key_name: test
+        key_name: ravikey 
         instance_type: t2.micro
-        image: ami-0653e888ec96eab9b
+        image: ami-0a574895390037a62 
         wait: yes
-        group: mysecgroup 
+        group: securityclass 
         count: 1
-        vpc_subnet_id: subnet-c33c268e
+        vpc_subnet_id: subnet-3a730f52
         assign_public_ip: yes
-        region: us-east-2
+        region: ap-south-1
       register: out
    
     - debug:
@@ -19,7 +19,7 @@
         hostname: "{{item.public_ip}}"
         groupname: myservers
         ansible_user: ubuntu
-        ansible_ssh_private_key_file: /home/aws/ueokey.pem
+        ansible_ssh_private_key_file: /home/aws/ravikey.pem
         ansible_python_interpreter: /usr/bin/python3
       with_items: "{{out.instances}}"
 
@@ -56,5 +56,5 @@
       register: outt
     - debug:
         var: outt
-    - name: remove git
-      command: apt remove -y git
+#    - name: remove git
+#      command: apt remove -y git

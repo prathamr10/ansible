@@ -7,7 +7,7 @@
         image: ami-04328208f4f0cf1fe 
         wait: yes
         group: mysecgroup 
-        count: 1
+        count: 2
         vpc_subnet_id: subnet-c33c268e
         assign_public_ip: yes
         region: us-east-2

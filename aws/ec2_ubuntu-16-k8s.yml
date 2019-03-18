@@ -3,11 +3,11 @@
   tasks:
     - ec2:
         key_name: test
-        instance_type: t2.micro
+        instance_type: t2.large
         image: ami-0653e888ec96eab9b
         wait: yes
         group: mysecgroup 
-        count: 1
+        count: 3
         vpc_subnet_id: subnet-c33c268e
         assign_public_ip: yes
         region: us-east-2
@@ -56,5 +56,5 @@
       register: outt
     - debug:
         var: outt
-    - name: remove git
-      command: apt remove -y git
+#    - name: remove git
+#      command: apt remove -y git
