@@ -7,7 +7,7 @@
         image: ami-0a574895390037a62 
         wait: yes
         group: securityclass 
-        count: 1
+        count: 3
         vpc_subnet_id: subnet-3a730f52
         assign_public_ip: yes
         region: ap-south-1
@@ -19,7 +19,7 @@
         hostname: "{{item.public_ip}}"
         groupname: myservers
         ansible_user: ubuntu
-        ansible_ssh_private_key_file: /home/aws/ravikey.pem
+        ansible_ssh_private_key_file: /home/ansible/aws/ravikey.pem
         ansible_python_interpreter: /usr/bin/python3
       with_items: "{{out.instances}}"
 
@@ -33,7 +33,7 @@
 
     - copy:
         content: "{% for host in groups.myservers %}{{ hostvars[host].inventory_hostname }}\n{% endfor %}"
-        dest: /home/aws/uinventory
+        dest: /home/ansible/uinventory
       delegate_to: localhost
 
 - name: setup user
@@ -57,4 +57,4 @@
     - debug:
         var: outt
 #    - name: remove git
-#      command: apt remove -y git
+#      command: apt remove -y git:

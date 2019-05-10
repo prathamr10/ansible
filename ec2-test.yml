@@ -4,10 +4,10 @@
     - ec2:
         key_name: test
         instance_type: t2.micro
-        image: ami-0653e888ec96eab9b
+        image: ami-0f65671a86f061fcd
         wait: yes
         group: mysecgroup 
-        count: 3 
+        count: 3
         vpc_subnet_id: subnet-c33c268e
         assign_public_ip: yes
         region: us-east-2
@@ -19,7 +19,7 @@
         hostname: "{{item.public_ip}}"
         groupname: myservers
         ansible_user: ubuntu
-        ansible_ssh_private_key_file: /home/ansible/aws/ueokey.pem
+        ansible_ssh_private_key_file: /home/aws/ueokey.pem
         ansible_python_interpreter: /usr/bin/python3
       with_items: "{{out.instances}}"
 
@@ -30,31 +30,9 @@
         timeout: 320
         state: started
       with_items: "{{ out.instances }}"
-
-    - copy:
+    - name: get iplist
+      copy:
         content: "{% for host in groups.myservers %}{{ hostvars[host].inventory_hostname }}\n{% endfor %}"
-        dest: /tmp/uinventory
+        dest: /tmp/ec2-inventory
       delegate_to: localhost
 
-- name: setup user
-  hosts: myservers
-  become: yes
-  tasks:
-    - name: install git & python
-      package:
-        name: "{{ item }}"
-        state: present
-      with_items:
-          - git
-          - python
-    - name: clone git repo
-      shell: git clone https://github.com/lerndevops/scritps.git
-      args:
-        chdir: /tmp
-    - name: create user
-      shell: /tmp/scritps/setup-aws-user.sh
-      register: outt
-    - debug:
-        var: outt
-#    - name: remove git
-#      command: apt remove -y git

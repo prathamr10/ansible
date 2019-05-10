@@ -7,8 +7,8 @@
         image: ami-0653e888ec96eab9b
         wait: yes
         group: mysecgroup 
-        count: 3 
-        vpc_subnet_id: subnet-c33c268e
+        count: 15
+        vpc_subnet_id: subnet-3eb8d044
         assign_public_ip: yes
         region: us-east-2
       register: out
@@ -19,7 +19,7 @@
         hostname: "{{item.public_ip}}"
         groupname: myservers
         ansible_user: ubuntu
-        ansible_ssh_private_key_file: /home/ansible/aws/ueokey.pem
+        ansible_ssh_private_key_file: /home/ansible/aws/ADPtesting.pem
         ansible_python_interpreter: /usr/bin/python3
       with_items: "{{out.instances}}"
 

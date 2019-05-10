@@ -3,11 +3,11 @@
   tasks:
     - ec2:
         key_name: test
-        instance_type: t2.large
+        instance_type: t2.medium
         image: ami-0653e888ec96eab9b
         wait: yes
         group: mysecgroup 
-        count: 3
+        count: 2
         vpc_subnet_id: subnet-c33c268e
         assign_public_ip: yes
         region: us-east-2
@@ -49,6 +49,10 @@
           - python
     - name: clone git repo
       shell: git clone https://github.com/lerndevops/scritps.git
+      args:
+        chdir: /tmp
+    - name: clone git repo
+      shell: git clone https://github.com/lerndevops/kube.git
       args:
         chdir: /tmp
     - name: create user
